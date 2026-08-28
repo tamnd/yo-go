@@ -1,0 +1,79 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The floor and the current release, both of them, every time. A module
+        # that declares go 1.25 and is only ever built on 1.26 is a module whose
+        # floor is a guess.
+        go: ["1.25", "1.26"]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: ${{ matrix.go }}
+      - run: go vet ./...
+      - run: go test ./...
+      - name: gofmt
+        run: |
+          out=$(gofmt -l .)
+          if [ -n "$out" ]; then
+            echo "not gofmt clean:" >&2
+            echo "$out" >&2
+            exit 1
+          fi
+
+  # A separate job because it answers a different question. The one above asks
+  # whether the code in this checkout is correct; this one asks whether the
+  # module a stranger downloads from the proxy can be built, which is the thing
+  # the install matrix actually promises and the thing that broke first: this
+  # repository held nothing but a README for its first three days, so `go get`
+  # resolved and there was no package to import.
+  consume:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v7.0.0
+        with:
+          go-version: "1.26"
+      - name: Import it the way the README says to
+        run: |
+          mkdir -p /tmp/consumer && cd /tmp/consumer
+          go mod init consumer
+          go get github.com/tamnd/yo-go@latest
+          cat > main.go <<'EOF'
+          package main
+
+          import (
+          	"fmt"
+
+          	yo "github.com/tamnd/yo-go"
+          )
+
+          func main() {
+          	_, err := yo.Open("app.yo")
+          	fmt.Println(err)
+          }
+          EOF
+          out=$(go run .)
+          echo "$out"
+          want="yo is not usable yet. This is a reserved placeholder at 0.0.1; see https://github.com/tamnd/yo"
+          if [ "$out" != "$want" ]; then
+            echo "the published module says something else" >&2
+            exit 1
+          fi
