@@ -17,11 +17,14 @@ func TestOpenReturnsTheSharedMessage(t *testing.T) {
 	if err == nil {
 		t.Fatal("Open returned a nil error")
 	}
-	const want = "yo is not usable yet. This is a reserved placeholder at 0.0.0; see https://github.com/tamnd/yo"
+	const want = "yo is not usable yet. This is a reserved placeholder at 0.0.1; see https://github.com/tamnd/yo"
 	if err.Error() != want {
 		t.Errorf("message drifted\n got: %s\nwant: %s", err.Error(), want)
 	}
-	if !strings.Contains(NotYet, "0.0.0") {
-		t.Error("NotYet no longer names the version it is reserving")
+	// Spelled out above and derived here. The literal catches a change to the
+	// wording, this catches the narrower failure the wording already had once,
+	// which is a message that names a version the module is no longer at.
+	if !strings.Contains(NotYet, Version) {
+		t.Errorf("NotYet names a version other than %s: %s", Version, NotYet)
 	}
 }

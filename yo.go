@@ -14,10 +14,19 @@ package yo
 
 import "errors"
 
+// Version is the version of this module. Every tier 1 and tier 2 SDK shares one
+// version number with the engine, so this is the engine's number and not a line
+// of its own.
+const Version = "0.0.1"
+
 // NotYet is the message every placeholder in every yo ecosystem carries. It is
 // one sentence, identical across all of them, so that somebody who meets it in
 // one language and searches for it finds one answer rather than six.
-const NotYet = "yo is not usable yet. This is a reserved placeholder at 0.0.0; see https://github.com/tamnd/yo"
+//
+// It is built from Version rather than written out, because the first draft
+// wrote the version into the string and the string then outlived the version it
+// named.
+const NotYet = "yo is not usable yet. This is a reserved placeholder at " + Version + "; see https://github.com/tamnd/yo"
 
 // Db is the database handle. It has no fields, because there is nothing yet to
 // put in them.
