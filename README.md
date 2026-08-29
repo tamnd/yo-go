@@ -8,7 +8,7 @@ Nothing to use yet, and the module says so out loud.
 
 ```go
 db, err := yo.Open("app.yo")
-// err: yo is not usable yet. This is a reserved placeholder at 0.0.1; see https://github.com/tamnd/yo
+// err: yo is not usable yet. This is a reserved placeholder at 0.0.2; see https://github.com/tamnd/yo
 ```
 
 `Open` returns an error rather than panicking, because that is what a Go caller is prepared to handle, and the error is the same sentence every other language's placeholder carries. The version is held so the name is held.

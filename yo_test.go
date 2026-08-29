@@ -17,7 +17,7 @@ func TestOpenReturnsTheSharedMessage(t *testing.T) {
 	if err == nil {
 		t.Fatal("Open returned a nil error")
 	}
-	const want = "yo is not usable yet. This is a reserved placeholder at 0.0.1; see https://github.com/tamnd/yo"
+	const want = "yo is not usable yet. This is a reserved placeholder at 0.0.2; see https://github.com/tamnd/yo"
 	if err.Error() != want {
 		t.Errorf("message drifted\n got: %s\nwant: %s", err.Error(), want)
 	}

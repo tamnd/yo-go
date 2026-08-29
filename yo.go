@@ -17,7 +17,7 @@ import "errors"
 // Version is the version of this module. Every tier 1 and tier 2 SDK shares one
 // version number with the engine, so this is the engine's number and not a line
 // of its own.
-const Version = "0.0.1"
+const Version = "0.0.2"
 
 // NotYet is the message every placeholder in every yo ecosystem carries. It is
 // one sentence, identical across all of them, so that somebody who meets it in
